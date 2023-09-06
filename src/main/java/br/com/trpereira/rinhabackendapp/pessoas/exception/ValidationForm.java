@@ -1,9 +1,10 @@
-package br.com.trpereira.rinhabackendapp.interfaces.validation;
+package br.com.trpereira.rinhabackendapp.pessoas.exception;
 
-import br.com.trpereira.rinhabackendapp.interfaces.form.PessoaForm;
+import br.com.trpereira.rinhabackendapp.pessoas.Pessoa;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,27 +16,27 @@ public class ValidationForm {
     private final List<String> contentErrors = new ArrayList<>();
     private final List<String> syntaxErrors = new ArrayList<>();
 
-    public void validate(PessoaForm form) {
+    public void validate(Pessoa pessoa) {
         contentErrors.clear();
         syntaxErrors.clear();
 
-        if (Objects.isNull(form.apelido())) {
+        if (Objects.isNull(pessoa.apelido)) {
             contentErrors.add("apelido não pode ser nulo");
         }
 
-        if (Objects.isNull(form.nome())) {
+        if (Objects.isNull(pessoa.nome)) {
             contentErrors.add("nome não pode ser nulo");
         }
 
-        if (Objects.nonNull(form.apelido()) && form.apelido().chars().allMatch(Character::isDigit)) {
+        if (Objects.nonNull(pessoa.apelido) && pessoa.apelido.chars().allMatch(Character::isDigit)) {
             syntaxErrors.add("apelido deve ser string e não número");
         }
 
-        if (Objects.nonNull(form.nome()) && form.nome().chars().allMatch(Character::isDigit)) {
+        if (Objects.nonNull(pessoa.nome) && pessoa.nome.chars().allMatch(Character::isDigit)) {
             syntaxErrors.add("nome deve ser string e não número");
         }
 
-        if (form.stack().stream().anyMatch(s -> s.chars().allMatch(Character::isDigit))) {
+        if (Arrays.stream(pessoa.stack.split(",")).anyMatch(s -> s.chars().allMatch(Character::isDigit))) {
             syntaxErrors.add("stack deve ser um array de apenas strings");
         }
 

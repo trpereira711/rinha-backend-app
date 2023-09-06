@@ -1,0 +1,72 @@
+version: '3.8'
+services:
+  api1:
+    image: mkaule/rinha-app:v1.0
+    hostname: api1
+    depends_on:
+      - db
+    expose:
+      - "80"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rinhaDB
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '500m'
+
+  api2:
+    image: mkaule/rinha-app:v1.0
+    hostname: api2
+    depends_on:
+      - db
+    expose:
+      - "80"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rinhaDB
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '500m'
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "9999:9999"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api1
+      - api2
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: '400m'
+
+  db:
+    image: postgres:15
+    hostname: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./create.sql:/docker-entrypoint-initdb.d/create.sql
+    environment:
+      POSTGRES_DB: rinhaDB
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: '1600m'
+
+networks:
+  default:
+    driver: bridge
+    name: rinha
+

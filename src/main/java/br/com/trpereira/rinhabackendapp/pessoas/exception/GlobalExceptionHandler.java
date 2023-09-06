@@ -1,7 +1,5 @@
-package br.com.trpereira.rinhabackendapp;
+package br.com.trpereira.rinhabackendapp.pessoas.exception;
 
-import br.com.trpereira.rinhabackendapp.interfaces.validation.ContentException;
-import br.com.trpereira.rinhabackendapp.interfaces.validation.SyntaxException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
