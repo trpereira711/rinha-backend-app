@@ -1,4 +1,4 @@
-package br.com.trpereira.rinhabackendapp.interfaces.validation;
+package br.com.trpereira.rinhabackendapp.pessoas.exception;
 
 import java.util.List;
 

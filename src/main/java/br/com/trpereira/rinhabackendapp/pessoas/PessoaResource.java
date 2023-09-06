@@ -1,12 +1,7 @@
-package br.com.trpereira.rinhabackendapp.interfaces;
+package br.com.trpereira.rinhabackendapp.pessoas;
 
 
-import br.com.trpereira.rinhabackendapp.entities.Pessoa;
-import br.com.trpereira.rinhabackendapp.entities.dto.PessoaDTO;
-import br.com.trpereira.rinhabackendapp.infra.PessoaRepository;
-import br.com.trpereira.rinhabackendapp.interfaces.form.PessoaForm;
-
-import br.com.trpereira.rinhabackendapp.interfaces.validation.ValidationForm;
+import br.com.trpereira.rinhabackendapp.pessoas.exception.ValidationForm;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -30,35 +25,36 @@ public class PessoaResource {
     }
 
     @GetMapping("pessoas/{id}")
-    public ResponseEntity<PessoaDTO> get(@PathVariable String id) {
+    public ResponseEntity<Pessoa> get(@PathVariable String id) {
         return repository.findById(UUID.fromString(id))
-                .map(pessoa -> ResponseEntity.ok(PessoaDTO.of(pessoa)))
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("pessoas")
     public ResponseEntity<List<Pessoa>> getByTerm(@RequestParam("t") String term,
                                                   @RequestParam(name = "page", required = false, defaultValue = "0") int page,
-                                                  @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
+                                                  @RequestParam(name = "size", required = false, defaultValue = "50") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(repository.getByTermo(term, pageable));
     }
 
 
     @GetMapping("contagem-pessoas")
-    public int getTotal() {
-        return repository.getTotal();
+    public long getTotal() {
+        return repository.count();
     }
 
     @PostMapping("pessoas")
-    public ResponseEntity<PessoaDTO> newPessoa(@RequestBody PessoaForm form) {
+    public ResponseEntity<Pessoa> newPessoa(@RequestBody Pessoa pessoa) {
+        pessoa.id = null;
 
-        validation.validate(form);
+        validation.validate(pessoa);
 
-        Pessoa novaPessoa = repository.save(Pessoa.of(form));
+        var newPessoa = repository.save(pessoa);
 
-        URI uri = URI.create("/pessoas/" + novaPessoa.getId());
+        URI uri = URI.create("/pessoas/" + newPessoa.id);
 
-        return ResponseEntity.created(uri).body(PessoaDTO.of(novaPessoa));
+        return ResponseEntity.created(uri).body(newPessoa);
     }
 }
