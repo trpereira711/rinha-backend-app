@@ -16,12 +16,15 @@ import java.util.UUID;
 public class PessoaResource {
 
     private final PessoaRepository repository;
-
     private final ValidationForm validation;
+    private final PessoaService service;
 
-    public PessoaResource(PessoaRepository repository, ValidationForm validation) {
+    public PessoaResource(PessoaRepository repository,
+                          ValidationForm validation,
+                          PessoaService service) {
         this.repository = repository;
         this.validation = validation;
+        this.service = service;
     }
 
     @GetMapping("pessoas/{id}")
@@ -46,15 +49,15 @@ public class PessoaResource {
     }
 
     @PostMapping("pessoas")
-    public ResponseEntity<Pessoa> newPessoa(@RequestBody Pessoa pessoa) {
-        pessoa.id = null;
+    public ResponseEntity<Pessoa> newPessoa(@RequestBody Pessoa pessoa) throws InterruptedException {
+        pessoa.id = UUID.randomUUID();
 
         validation.validate(pessoa);
 
-        var newPessoa = repository.save(pessoa);
+        service.put(pessoa);
 
-        URI uri = URI.create("/pessoas/" + newPessoa.id);
+        URI uri = URI.create("/pessoas/" + pessoa.id);
 
-        return ResponseEntity.created(uri).body(newPessoa);
+        return ResponseEntity.created(uri).body(pessoa);
     }
 }

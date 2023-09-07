@@ -16,8 +16,6 @@ import java.util.UUID;
 public class Pessoa {
 
     @Id
-    @GeneratedValue
-    @Column(columnDefinition = "UUID DEFAULT gen_random_uuid()")
     public UUID id;
 
     @Column(unique = true, length = 32)

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS PESSOAS (
                                        STACK TEXT,
                                        BUSCA TEXT GENERATED ALWAYS AS (
                                                 lower(apelido || ' ' || nome || ' ' || STACK)
-                                             ) STORED
+                                       ) STORED
 );
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS IDX_BUSCA_TGRM ON PESSOAS USING GIST (BUSCA GIST_TRGM_OPS);

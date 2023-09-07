@@ -30,6 +30,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleException(SyntaxException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InterruptedException.class)
+    public ResponseEntity<String> handleException(InterruptedException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }
 
 
